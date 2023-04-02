@@ -15,9 +15,12 @@ router.get("/names", async function (req, res, next) {
   res.send(allPatients);
 });
 
-router.get("/id", function (req, res, next) {
-  var id = req.query.name;
-  res.send("respond with patients");
+router.get("/id", async function (req, res, next) {
+  var id = req.query.id;
+
+  const allPatients = await Patient.findOne({ Id: id });
+
+  res.send(allPatients);
 });
 
 module.exports = router;

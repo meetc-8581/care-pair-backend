@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const Patient = new mongoose.model(
-  "Patient",
+const Nurse = new mongoose.model(
+  "Nurse",
   new mongoose.Schema({
     Id: {
       type: Number,
@@ -14,4 +14,4 @@ const Patient = new mongoose.model(
   })
 );
 
-exports.Patient = Patient;
+exports.Nurse = Nurse;

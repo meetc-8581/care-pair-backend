@@ -15,12 +15,12 @@ const predcitions = {
 };
 
 /* GET home page. */
-router.get("/", function (req, res, next) {
+router.get("/", async function (req, res, next) {
   //   const modelPath = "./model.joblib";
 
   const modelPath = "./public/model.joblib";
 
-  const inputData = [req.body.data];
+  const inputData = [parseInt(req.query.id)];
 
   const scriptPath = "./script.py";
 
@@ -28,29 +28,20 @@ router.get("/", function (req, res, next) {
 
   script_name = "./public/script.py";
 
-  options = [script_name, modelPath, JSON.stringify(inputData)];
+  options = [script_name, modelPath, inputData];
   console.log(options);
-  const python = spawn("python", options);
+  const python = await spawn("python", options);
 
-  python.stdout.on("data", function (data) {
-    console.log("Pipe data from python script ...");
-    console.log(data.toString());
-    output.push(data);
+  await python.stdout.on("data", function (data) {
+    console.log("Pipe data from python script ...", data);
+    res.status(200).send(JSON.parse(data.toString().trim()));
   });
 
-  python.on("message", (code) => {
-    console.log(`message ${code}`);
-  });
-
-  python.on("error", (code) => {
-    console.log(`message ${code}`);
-  });
-  // in close event we are sure that stream is from child process is closed
-  python.on("close", (code) => {
+  await python.on("close", (code) => {
     console.log(`child process close all stdio with code ${code}`);
+    // console.log("output", output);
+    // res.status(200).send(JSON.parse(output[0].trim()));
   });
-
-  res.status(200).send(output);
 });
 
 module.exports = router;
